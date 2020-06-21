@@ -1,0 +1,38 @@
+//
+// ooout: ../css/style.css, sourcemap: false, compress: true
+
+oss ='./';
+vs = '?v=123';
+
+bgcolor = #000;
+loadingColor = #fff;
+
+vendor(prop, args)
+    -webkit-{prop} args
+    {prop} args
+
+@import "reset";
+@import "font";
+
+html, body {
+    background: bgcolor;
+    width 100%
+    word-break: break-all;
+}
+
+input::-webkit-input-placeholder {
+    color: rgba(0, 0, 0, 0.3);
+}
+
+html {
+    font-size: calc(100vw/6.4);
+}
+
+.container {
+    position absolute
+    top 0
+    left: 0
+    width: 100%
+    height: 100vh
+    overflow: hidden;
+}

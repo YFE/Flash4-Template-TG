@@ -1,0 +1,31 @@
+#！ /bin/bash
+
+if [ $1 == 'dev' ]
+then
+    if [ $2 ] && [ $2 == 'fla' ]
+    then
+        cd ../fla/campaign && gulp build && gulp released && cd ../../source && fis3 release dev -d -w
+    else
+        fis3 release dev -d -w
+    fi
+fi
+
+if [ $1 == 'pro' ]
+then
+    if [ $2 ] && [ $2 == 'fla' ]
+    then
+        cd ../fla/campaign && gulp build && gulp released && cd ../../source && fis3 release pro -d -c
+    else
+        fis3 release pro -d -c
+    fi
+fi
+
+if [ $1 == 'prod' ]
+then
+    if [ $2 ] && [ $2 == 'fla' ]
+    then
+        cd ../fla/campaign && gulp build && gulp released && cd ../../source && fis3 release prod -d -c
+    else
+        fis3 release prod -d -c 
+    fi
+fi
