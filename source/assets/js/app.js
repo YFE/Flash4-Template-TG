@@ -11,14 +11,14 @@
 			gm.mt = annie.MouseEvent;
 			gm.et = annie.Event;
 			let on_resize = _.throttle(function () {
-				let _selfBox = document.querySelector("#app");
-				let _selfwh = _.sortBy([_selfBox.offsetWidth, _selfBox.offsetHeight]);
+				// let _selfBox = document.querySelector("#app");
+				let _selfwh = _.sortBy([document.body.clientWidth, document.body.clientHeight]);
 				let _screenHeight = _selfwh[1] / (_selfwh[0] / 640);
 				let _desHeight = _screenHeight <= 1040 ? 1040 : _screenHeight;
 				self.suitHeight = -(1280 - _desHeight > 0 ? 1280 - _desHeight : 0) / 2 + (_screenHeight > 1280 ? (_screenHeight - 1280) / 2 : 0);
 				self.initHeight = _desHeight;
 				ems.trigger('resize');
-			},100);
+			},0);
 			window.addEventListener('resize',on_resize,false);
 			on_resize();
 
