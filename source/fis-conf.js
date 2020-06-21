@@ -18,6 +18,7 @@ fis.match('::package', {
 });
 
 fis.match('assets/js/libs/gm.js', {
+    parser: fis.plugin('babel-latest'), 
     optimizer: fis.plugin('uglify-js'),
 });
 
@@ -30,6 +31,7 @@ fis.match('assets/js/libs/*.js', {
     packTo: 'base.js',
 });
 
+// plugin JS 逐个输出
 fis.match('assets/js/plugin/(*.js)', {
     // packTo: 'base.js',
     //输出至根目录
@@ -45,7 +47,7 @@ fis.match('assets/js/(*.js)', {
     release: '$1'
 });
 
-
+// 输出ui文件
 fis.match('ui/**/(*.{js,swf,json,zip,txt,webp})', {
     //输出至根目录
     release: '$1'
@@ -268,4 +270,4 @@ fis.config.set('settings.optimizer.uglify-js', {
     }
 });
 
-console.log("本次版本号为： "+ currVersion);
+// console.log("本次版本号为： "+ currVersion);

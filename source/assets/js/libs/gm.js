@@ -454,6 +454,128 @@
         }
     }
 
+    class VideoPlayer {
+		constructor (_config){
+            this.video = document.querySelector(_config.videoId);
+            enableInlineVideo && enableInlineVideo(this.video);
+            
+			this.ems = new gm.EM();
+
+			this.checkPoint = {
+				list : [],
+				add : (_point)=>{
+					this.checkPoint.list.push(_.assign({
+						name : 'unnamed',
+						pass : false,
+						time : 0.01,
+						action : ()=>{
+						}
+					},_point));
+				},
+				clear : ()=>{
+					this.checkPoint.list = [];
+				}
+			};
+		}
+		start (_url){
+            this.video.src = _url;
+            this.destroy();
+			
+			this.video.addEventListener('ended',this.ended.bind(this));
+
+			this.video.style.opacity = 0.01;
+		}
+
+		play (){
+			this.ems.trigger('play');
+
+			this.checkPoint.add({
+				name : 'playing',
+				time : 0.01,
+				action : ()=>{
+					this.playing();
+				}
+			});
+
+			this.update();
+			this.video.play()
+		}
+
+		update (_list){
+			let self = this;
+			var vtime = 0;
+			requestAnimationFrame(on_video_frame);
+
+			function on_video_frame(){
+				if( self.isVideoEnd ) return;
+				vtime = self.video.currentTime;
+
+				_.map(self.checkPoint.list,(_checkPoint)=>{
+					if( !_checkPoint.pass && (vtime > _checkPoint.time) ){
+						_checkPoint.pass = true;
+						_checkPoint.action();
+					}
+				});
+
+				requestAnimationFrame(on_video_frame);
+			}
+		}
+
+		playing (){
+			this.video.style.opacity = 1;
+			this.ems.trigger('playing');
+		}
+
+		ended (){
+			if( this.isVideoEnd ) return;
+			this.ems.trigger('ended');
+			this.isVideoEnd = true;
+
+			_.delay((e) => {
+				this.video.style.opacity = 0.01;
+			},300)
+		}
+
+		destroy(){
+			this.video.removeEventListener('ended',this.ended.bind(this));
+			this.isVideoEnd = false;
+            this.ems.off();
+		}
+	}
+	gm.VideoPlayer = VideoPlayer;
+	/*
+		#初始化
+		let myPlayer = new gm.VideoPlayer({
+            videoId : "#thevideo"
+        }));
+
+		// 设置地址
+		myPlayer.start(__mediaurl + 'brand.mp4'+__version);
+		//播放开始
+		myPlayer.ems.on('play',(e) => {
+		})
+
+		//缓冲完成可以播放的时候
+		myPlayer.ems.on('playing',(e) => {
+		})
+
+		//清除所有检查点
+		myPlayer.checkPoint.clear()
+
+		//添加检查点
+		myPlayer.checkPoint.add({
+			name : 'sikp',
+			time : 1.00,
+			action : ()=>{
+				myPlayer.video.pause()
+			}
+		});
+
+		//播放完成
+		myPlayer.ems.on('ended',_.throttle((e) => {
+		},1000));
+	*/
+
     gm.isLoadEnd = false;
     gm.load = function() {
         gm.ems.trigger('load');
@@ -467,4 +589,4 @@
     }
 
 
-}(this));
+}(window));

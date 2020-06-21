@@ -39,5 +39,24 @@ input::-webkit-input-placeholder {
     overflow: hidden;
 }
 .test {
-    background-image url(oss share.jpg vs);
+    background-image url(oss+"share.jpg"+vs);
+}
+
+// 禁止长按图片保存
+img {
+    -webkit-touch-callout: none;
+}
+.cimg {
+  -webkit-touch-callout: none;
+  pointer-events: none; // 像微信浏览器还是无法禁止，加上这行样式即可
+}
+
+// 禁止长按选择文字
+.cdiv {
+  -webkit-user-select: none;
+}
+
+// 禁止长按呼出菜单
+.cdiv {
+  -webkit-touch-callout: none;
 }
