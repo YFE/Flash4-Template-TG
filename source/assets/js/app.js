@@ -10,13 +10,22 @@
 			let self = this;
 			gm.mt = annie.MouseEvent;
 			gm.et = annie.Event;
+
+			let safe_rect = {
+				w: 640, h:1040
+			};
+			let design_rect = {
+				w: 800,h:1280
+			}
+			
 			let on_resize = _.throttle(function () {
 				// let _selfBox = document.querySelector("#app");
-				let _selfwh = _.sortBy([document.body.clientWidth, document.body.clientHeight]);
-				let _screenHeight = _selfwh[1] / (_selfwh[0] / 640);
-				let _desHeight = _screenHeight <= 1040 ? 1040 : _screenHeight;
-				self.suitHeight = -(1280 - _desHeight > 0 ? 1280 - _desHeight : 0) / 2 + (_screenHeight > 1280 ? (_screenHeight - 1280) / 2 : 0);
-				self.initHeight = _desHeight;
+				let _win_wh = _.sortBy([document.body.clientWidth, document.body.clientHeight]);
+				let _screen_height = _win_wh[1] / (_win_wh[0] / safe_rect.w);
+				let _expect_height = _screen_height <= safe_rect.h ? safe_rect.h : _screen_height;
+				self.suitHeight = -(design_rect.h - _expect_height > 0 ? design_rect.h - _expect_height : 0) / 2 + (_screen_height > design_rect.h ? (_screen_height - design_rect.h) / 2 : 0);
+
+				self.initHeight = _expect_height;
 				ems.trigger('resize');
 			},0);
 			window.addEventListener('resize',on_resize,false);
@@ -26,7 +35,7 @@
 			annie._isReleased= __version.replace('?v=','');
 			annie.suffixName = '.webp';
 
-			self.stage = new annie.Stage('app', 800, self.initHeight, 30, annie.StageScaleMode.FIXED_HEIGHT, 0);
+			self.stage = new annie.Stage('app', design_rect.w, self.initHeight, 30, annie.StageScaleMode.FIXED_HEIGHT, 0);
 			self.stage.autoSteering = false;
 			// self.stage.autoResize = false;
 
