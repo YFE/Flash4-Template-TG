@@ -272,7 +272,7 @@
             }
         },
         getConfig : function(_wxid,_callback){
-            var jsonp_url = "https://we.igumo.cc/jsconfig.php?appid="+_wxid+'&url='+location.href.split('#')[0];
+            var jsonp_url = "https://we.igumo.cc/jsconfig.php?appid="+_wxid+'&url='+ encodeURIComponent(location.href.split('#')[0]);
             annie.jsonp(jsonp_url,1,'getdata',function(_data) {
                 if (_data.status == 1) {
                     _callback(_data.data);
@@ -378,6 +378,16 @@
     }
 
     gm.fla = {
+        //按钮防抖
+        tClick :function(_mc,_func,_time){
+            _mc.on(gm.mt.CLICK,_.throttle(_func,_time || 1500));
+            return _mc;
+        },
+        //按钮动作
+        btnClick : function(_mc,_func,_time){
+            gm.fla.tClick(gm.fla.setButton(_mc),_func,_time);
+            return _mc;
+        },
         getClass : function (_name) {
             if (window[_name]) {
                 return new window[_name][_name.replace(/(\w)/, function (v) { return v.toUpperCase() })]
@@ -419,7 +429,6 @@
                     }
                 }
             }
-    
             _movieClip.on(gm.mt.MOUSE_DOWN, function (e) {
                 _startX = e.stageX;
                 _startY = e.stageY;
@@ -432,15 +441,13 @@
                 _startY = 0;
                 _startX = 0;
             });
-
             return _movieClip
         },
         setButton : function(_movieClip){
-            _movieClip.anchorX = _movieClip.getWH().width/2;
-            _movieClip.anchorY = _movieClip.getWH().height/2;
-    
             _movieClip.mouseChildren = false;
             _movieClip.on(gm.mt.MOUSE_DOWN,function(){
+                _movieClip.anchorX = _movieClip.width/2;
+                _movieClip.anchorY = _movieClip.height/2;
                 _movieClip.scaleX = _movieClip.scaleY = 0.95;
             })
             _movieClip.on(gm.mt.MOUSE_UP,function(){
@@ -454,6 +461,7 @@
         }
     }
 
+    //视频播放控件
     class VideoPlayer {
 		constructor (_config){
             this.video = document.querySelector(_config.videoId);
@@ -474,21 +482,14 @@
 				},
 				clear : ()=>{
 					this.checkPoint.list = [];
-				}
-			};
-		}
-		start (_url){
-            this.video.src = _url;
-            this.destroy();
-			
-			this.video.addEventListener('ended',this.ended.bind(this));
-
-			this.video.style.opacity = 0.01;
-		}
-
-		play (){
-			this.ems.trigger('play');
-
+                },
+                reset : ()=>{
+                    _.each(this.checkPoint.list,(_item) => {
+                        _item.pass = false;
+                    })
+                }
+            };
+            
 			this.checkPoint.add({
 				name : 'playing',
 				time : 0.01,
@@ -497,8 +498,20 @@
 				}
 			});
 
-			this.update();
-			this.video.play()
+		}
+		start (_url){
+            this.video.src = _url;
+            this.destroy();
+			
+			this.video.addEventListener('ended',this.ended.bind(this));
+			this.video.style.opacity = 0.01;
+		}
+
+		play (){
+			this.ems.trigger('play');
+            this.update();
+            this.isVideoEnd = false;
+            this.video.play()
 		}
 
 		update (_list){
@@ -523,13 +536,14 @@
 
 		playing (){
 			this.video.style.opacity = 1;
-			this.ems.trigger('playing');
+            this.ems.trigger('playing');
 		}
 
 		ended (){
 			if( this.isVideoEnd ) return;
 			this.ems.trigger('ended');
-			this.isVideoEnd = true;
+            this.isVideoEnd = true;
+            this.checkPoint.reset();
 
 			_.delay((e) => {
 				this.video.style.opacity = 0.01;
@@ -539,9 +553,12 @@
 		destroy(){
 			this.video.removeEventListener('ended',this.ended.bind(this));
 			this.isVideoEnd = false;
+            this.checkPoint.reset();
             this.ems.off();
 		}
-	}
+    }
+    
+
 	gm.VideoPlayer = VideoPlayer;
 	/*
 		#初始化

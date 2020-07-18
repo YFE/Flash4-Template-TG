@@ -1,4 +1,7 @@
 ## 版本更新
+### 2020 06-26
+    1. 增加 gm.fla.btnClick, gm.fla.tClick 方法， 调整 gm.fla.setButton 方法
+    
 ### 2020-06-21 
     1. 更新 annie 至3.2.1
     2. 添加 gm.videoPlayer.js 
